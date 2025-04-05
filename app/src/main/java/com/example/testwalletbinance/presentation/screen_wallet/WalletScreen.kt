@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -33,9 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import com.example.testwalletbinance.R
 import com.example.testwalletbinance.presentation.screen_wallet.viewmodel.WalletViewModel
+import com.example.testwalletbinance.ui.RateUiState
 
 
 @ExperimentalMaterial3Api
@@ -47,7 +50,7 @@ fun WalletScreen(
     val walletState by viewModel.walletFlow.collectAsState(initial = null)
     val transactions = viewModel.transactionsFlow.collectAsLazyPagingItems()
 
-    val bitcoinRate by viewModel.rate.collectAsState(initial = null)
+    val bitcoinRate by viewModel.rateState.collectAsStateWithLifecycle()
 
     var showDialog by remember { mutableStateOf(false) }
     var topUpAmount by remember { mutableStateOf("") }
@@ -65,16 +68,29 @@ fun WalletScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.bitcoin_rate, bitcoinRate ?: 0.0),
-                    color = Color.Gray,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                )
+                when (bitcoinRate) {
+                    is RateUiState.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is RateUiState.Success -> {
+                        val rate = (bitcoinRate as RateUiState.Success).rate
+                        Text(
+                            text = stringResource(R.string.bitcoin_rate, rate ?: 0.0),
+                            color = Color.Gray,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                    }
+                    is RateUiState.Error -> {
+                        val message = (bitcoinRate as RateUiState.Error).message
+                        Text("Error: $message", color = Color.Red)
+                    }
+                }
             }
 
             Text(
