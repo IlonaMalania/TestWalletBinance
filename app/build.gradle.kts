@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.junit.ktx)
     ksp(libs.room.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
@@ -77,8 +78,17 @@ dependencies {
     implementation(libs.paging.compose)
     implementation(libs.room.paging)
 
+    testImplementation (libs.junit.jupiter.api)
+    testImplementation (libs.junit.jupiter.engine)
+    testImplementation (libs.mockk)
+    testImplementation (libs.androidx.core.testing)
+    testImplementation (libs.mockito.core)
+    testImplementation (libs.lifecycle.viewmodel.ktx)
+    testImplementation (libs.androidx.lifecycle.livedata.ktx)
+    testImplementation (libs.kotlinx.coroutines.test)
 
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
