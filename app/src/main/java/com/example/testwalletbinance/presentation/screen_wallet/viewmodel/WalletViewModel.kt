@@ -7,6 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.example.testwalletbinance.data.model.TransactionEntity
 import com.example.testwalletbinance.data.model.WalletEntity
+import com.example.testwalletbinance.data.repository.BitcoinRepository
 import com.example.testwalletbinance.data.repository.WalletRepository
 import com.example.testwalletbinance.presentation.screen_add_transaction.TransactionCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,11 +20,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletViewModel @Inject constructor(
-    private val repository: WalletRepository
+    private val repository: WalletRepository,
+    private val bitcoinRepository: BitcoinRepository
 ) : ViewModel() {
 
     private val _walletFlow = MutableStateFlow<WalletEntity?>(null)
     val walletFlow: StateFlow<WalletEntity?> = _walletFlow.asStateFlow()
+
+    private val _rate = MutableStateFlow<Double?>(null)
+    val rate: StateFlow<Double?> = _rate.asStateFlow()
 
     //pagination
     val transactionsFlow = Pager(
@@ -41,9 +46,16 @@ class WalletViewModel @Inject constructor(
             }
         }
         loadWallet()
+        loadRate()
     }
 
-    private fun loadWallet() {
+    private fun loadRate() {
+        viewModelScope.launch {
+            _rate.value = bitcoinRepository.getBitcoinRate()
+        }
+    }
+
+     fun loadWallet() {
         viewModelScope.launch {
             repository.walletFlow.collectLatest { wallet ->
                 _walletFlow.value = wallet

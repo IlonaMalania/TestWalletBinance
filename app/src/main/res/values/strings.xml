@@ -7,7 +7,8 @@
     <string name="amount_in_btc">Amount in BTC</string>
     <string name="bitcoin_wallet">Bitcoin Wallet</string>
     <string name="top_up">Top Up</string>
-    <string name="wallet_balance">Balance: %.8f BTC</string>
+    <string name="wallet_balance">Balance: %.2f BTC</string>
+    <string name="bitcoin_rate">1 BTC/ %.2f $</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="top_up_balance">Top Up Balance</string>
